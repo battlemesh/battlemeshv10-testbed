@@ -1,7 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
-cat $1 | while read -r line
+FILE="${1:-./routers}"
+logger -s "using file '$FILE'"
+
+LIST_FAILED=
+
+while read -r LINE
 do
-    ip="$line"
-    ping -c 1 $ip
-done
+	IP="$LINE"
+	ping -c 1 $IP || LIST_FAILED="$LIST_FAILED $IP"
+done <"$FILE"
+
+logger -s "failed IP's: '$LIST_FAILED'"
