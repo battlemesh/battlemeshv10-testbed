@@ -147,7 +147,7 @@ IpcConnect
 
 LoadPlugin "/usr/lib/olsrd_netjson.so.1.1"
 {
-  PlParam "Accept"                         "0.0.0.0"
+  PlParam "Accept"                         "::"
   PlParam "port"                           "3005"
 }
 
