@@ -2,7 +2,7 @@ MAX_NODES=15
 PING_NUM=5
 DEST_FILE="192.168.254.16"
 
-outfile="/tmp/"`hostname`"-ping.txt"
+outfile="/tmp/pingtest.txt"
 
 rm -f $outfile
 
