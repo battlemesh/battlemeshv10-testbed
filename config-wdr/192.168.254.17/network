@@ -19,9 +19,9 @@ config interface 'testbed'
 	option type 'bridge'
         option ifname 'eth0.1'
         option proto 'static'
-        option ipaddr '10.0.16.1'
+        option ipaddr '10.0.17.1'
         option netmask '255.255.255.0'
-	option ip6addr 'fc00:16::1/64'
+	option ip6addr 'fc00:17::1/64'
 
 config switch
 	option name 'switch0'
