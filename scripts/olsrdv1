@@ -1,0 +1,100 @@
+#!/bin/ash
+
+
+REGEX='^[[:space:]]*node([[:digit:]]+)[[:space:]]*$'
+HOSTNUMBER="$(hostname | \
+  grep -iE "$REGEX" | \
+  sed -r "s#$REGEX#\1#")"
+
+if [[ -z "$HOSTNUMBER" ]]; then
+  echo "ERROR: host number not found"
+  exit 1
+fi
+
+echo "Host : $HOSTNUMBER"
+
+
+
+
+
+
+#
+# olsrd v1
+#
+
+killall -q olsrd
+sleep 1
+
+echo "WLAN1: 10.254.0.$HOSTNUMBER/24"
+ifconfig wlan1 10.254.0.$HOSTNUMBER netmask 255.255.255.0 up
+
+echo "Generating olsrd v1 configuration"
+
+mkdir -p /etc/olsrd
+
+cat > /etc/olsrd/olsrd.conf << EOF
+#####################################################
+# OLSR.org routing daemon config file
+#####################################################
+
+DebugLevel                                 0
+IpVersion                                  4
+TosValue                                   224
+LinkQualityFishEye                         0
+MprCoverage                                1
+LockFile                                   "/var/run/olsrd.lock"
+MainIp                                     10.254.0.$HOSTNUMBER
+LinkQualityAlgorithm                       "etx_ffeth"
+
+InterfaceDefaults
+{
+  HelloInterval                            2.00
+  HelloValidityTime                        20.00
+  TcInterval                               5.00
+  TcValidityTime                           30.00
+  MidInterval                              5.00
+  MidValidityTime                          50.00
+  HnaInterval                              5.00
+  HnaValidityTime                          15.00
+}
+
+Interface "wlan1"
+{
+}
+
+Hna4
+{
+  10.0.$HOSTNUMBER.0/24
+}
+
+IpcConnect
+{
+}
+
+#####################################################
+# Plugins
+#####################################################
+
+LoadPlugin "/usr/lib/olsrd_netjson.so.1.1"
+{
+  PlParam "port"                           "2005"
+}
+
+LoadPlugin "/usr/lib/olsrd_txtinfo.so.1.1"
+{
+  PlParam "Accept"                         "0.0.0.0"
+  PlParam "port"                           "2006"
+  PlParam "httpheaders"                    "false"
+}
+
+LoadPlugin "/usr/lib/olsrd_jsoninfo.so.1.1"
+{
+  PlParam "Accept"                         "0.0.0.0"
+  PlParam "port"                           "2007"
+  PlParam "pretty"                         "true"
+}
+EOF
+
+
+olsrd
+

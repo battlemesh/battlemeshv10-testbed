@@ -1,0 +1,29 @@
+#!/bin/sh
+
+#
+# batman-adv
+#
+
+testbed_if="br-testbed"
+
+ipv4=$(ip -o addr show dev br-testbed|grep inet\ | awk '{print $4}' | sed -e s@/[0-9]*@@)
+ipv6=$(ip -o addr show dev br-testbed|grep inet6\ fc | awk '{print $4}' | sed -e s@/[0-9]*@@)
+
+echo "testing IPs: v4=${ipv4} v6=${ipv6}"
+
+# remove addresses from br-testbed
+ip addr del ${ipv4}/24 dev ${testbed_if}
+ip -6 addr del ${ipv6}/64 dev ${testbed_if}
+
+# setup batman-adv
+ip link set wlan1 up
+batctl ra BATMAN_V
+batctl if add wlan1
+ifconfig bat0 up
+brctl addif br-testbed bat0
+
+# re-add addresses with broader network
+ip addr add ${ipv4}/16 dev ${testbed_if}
+ip -6 addr add ${ipv6}/16 dev ${testbed_if}
+
+echo "batman-adv configuration completed."

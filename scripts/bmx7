@@ -1,0 +1,26 @@
+#!/bin/ash
+
+REGEX='^[[:space:]]*node([[:digit:]]+)[[:space:]]*$'
+HOSTNUMBER="$(hostname | \
+  grep -iE "$REGEX" | \
+  sed -r "s#$REGEX#\1#")"
+
+if [[ -z "$HOSTNUMBER" ]]; then
+  echo "ERROR: host number not found"
+  exit 1
+fi
+
+echo "Host : $HOSTNUMBER"
+
+#
+# bmx7
+#
+
+killall -q bmx7
+sleep 1
+#ip link set wlan1 up
+
+bmx7  plugin=bmx7_tun.so plugin=bmx7_iwinfo.so dev=wlan1
+bmx7 -c unicastHna=fc00:$HOSTNUMBER::/64
+bmx7 -c tunDev=main /tun4Address 10.254.0.$HOSTNUMBER/32
+bmx7 -c tunOut=v4out /network 10.0.0.0/8

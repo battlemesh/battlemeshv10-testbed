@@ -1,0 +1,9 @@
+#!/bin/bash
+
+IFS='$\n'
+routers=( $(cat "$1") )
+
+for ip in "${routers[@]}"; do
+    ssh root@$ip reboot
+    echo "$ip configuration updated"
+done

@@ -1,0 +1,14 @@
+#!sh
+
+killall -q babeld
+sleep 1
+
+hostname=$(cat /etc/config/system | grep hostname)
+num=${hostname:22:1}
+ip4="10.0.$num.1/24"
+ip6="fc00:$num::1/64"
+
+ip addr add $ip4 dev wlan1
+ip addr add $ip6 dev wlan1
+
+babeld -d 4 -C 'redistribute local deny' -C 'redistribute if wlan1 allow' wlan1 &
