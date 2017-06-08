@@ -12,8 +12,8 @@ if [ -e "$FILE" ]; then
 	log "using file '$FILE'"
 	while read -r LINE; do LIST_IP="$LIST_IP $LINE"; done <"$FILE"
 else
-	log "using IP's: $1"
-	for IP in $1; do LIST_IP="$LIST_IP $IP"; done
+	log "using IP's: $FILE"
+	for IP in $FILE; do LIST_IP="$LIST_IP $IP"; done
 fi
 
 for IP in $LIST_IP; do
