@@ -5,12 +5,12 @@ DATAFILE="/tmp/failuretest.txt"
 
 rm -f /tmp/pids.txt
 # test addresses
-LEFT_NODES="192.168.254.8 192.168.254.9"
-RIGHT_NODES="10.0.17.1 10.0.2.1"
-
-# management addresses
 #LEFT_NODES="192.168.254.8 192.168.254.9"
-#RIGHT_NODES="192.168.254.17 192.168.254.2"
+#RIGHT_NODES="10.0.17.1 10.0.2.1"
+
+LEFT_NODES="192.168.254.8 192.168.254.9"
+RIGHT_NODES="fc00:17::1 fc00:2::1"
+
 
 # Run the script in each node with a ssh session in bg 
 for sip in $LEFT_NODES; 
