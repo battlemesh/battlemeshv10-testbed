@@ -1,5 +1,8 @@
 #!sh
 
+# safe mem+confusion:
+rmmod batman_adv
+
 killall -q babeld
 sleep 1
 

@@ -4,6 +4,9 @@
 # olsrd v2
 #
 
+# safe mem+confusion:
+rmmod batman_adv
+
 killall -q olsrd2
 sleep 1
 

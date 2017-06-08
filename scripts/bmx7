@@ -16,6 +16,9 @@ echo "Host : $HOSTNUMBER"
 # bmx7
 #
 
+# safe mem+confusion:
+rmmod batman_adv
+
 killall -q bmx7
 sleep 1
 #ip link set wlan1 up

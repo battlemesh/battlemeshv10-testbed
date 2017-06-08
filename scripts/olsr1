@@ -22,6 +22,9 @@ echo "Host : $HOSTNUMBER"
 # olsrd v1
 #
 
+# safe mem+confusion:
+rmmod batman_adv
+
 killall -q olsrd
 sleep 1
 
