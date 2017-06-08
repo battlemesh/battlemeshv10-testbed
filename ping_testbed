@@ -1,16 +1,22 @@
 #!/bin/sh
 . scripts/functions_wbm.sh
 
-FILE="${1:-./routers}"
+FILE="${1:-./routers}"		# or even a list of IPs (piping stdin not allowed)
 USE_TEST_NETWORK="$2"		# <empty> or 'true'
-log "using file '$FILE'"
 
 LIST_FAILED=
 BAD=0
 GOOD=0
 
-while read -r LINE
-do
+if [ -e "$FILE" ]; then
+	log "using file '$FILE'"
+	while read -r LINE; do LIST_IP="$LIST_IP $LINE"; done <"$FILE"
+else
+	log "using IP's: $1"
+	for IP in $1; do LIST_IP="$LIST_IP $IP"; done
+fi
+
+for IP in $LIST_IP; do
 	IP="$LINE"
 	[ -n "$USE_TEST_NETWORK" ] && IP="$( convert_management2test_ip "$IP" )"
 
@@ -20,7 +26,7 @@ do
 		BAD=$(( BAD + 1 ))
 		LIST_FAILED="$LIST_FAILED $IP"
 	fi
-done <"$FILE"
+done
 
 log "GOOD: $GOOD BAD: $BAD routers"
 for IP in $LIST_FAILED; do
