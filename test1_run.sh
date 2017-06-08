@@ -1,4 +1,5 @@
 #!/bin/sh
+. scripts/functions_wbm.sh
 
 FILE="${1:-./test1_ip_pairs.txt}"
 DURATION_OVERALL="${2:-900}"		# [seconds]
@@ -11,59 +12,7 @@ BYTES_TRANSFERED=0
 read PROTO </tmp/MESHPROTO || PROTO='unknown'
 
 echo "# test1: $(date) protocol: $PROTO DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
-logger -s "using file '$FILE', DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
-
-uptime_in_seconds()
-{
-	cut -d'.' -f1 /proc/uptime
-}
-
-ping_ok()
-{
-	local ip="$1"
-	local max=5
-	local i=1
-
-	while [ $i -lt $max ]; do {
-		ping -c1 "$ip" >/dev/null 2>/dev/null && return 0
-		i=$(( i + 1 ))
-	} done
-
-	return 1
-}
-
-convert_management2test_ip()
-{
-	local ip="$1"				# e.g. 192.168.254.13
-	local octet4="$( echo "$ip" | cut -d'.' -f4 )"
-
-	echo "10.0.${octet4}.1"
-}
-
-execute_command_via_ssh()
-{
-	local ip="$1"
-	local mycommand="$2"
-
-	logger -s "sending to $ip: $mycommand"
-
-	# ssh will eat stdin, so the 'while read' breaks, we must use '-n'
-	# see: https://stackoverflow.com/questions/9393038/ssh-breaks-out-of-while-loop-in-bash
-	ssh -n \
-	    -o ConnectTimeout=10 \
-	    -o StrictHostKeyChecking=no \
-	    -o UserKnownHostsFile=/dev/null \
-		root@$ip "$mycommand"
-
-	if [ $? -eq 0 ]; then
-		GOOD=$(( GOOD + 1 ))
-	else
-		BAD=$(( BAD + 1 ))
-		return 1
-	fi
-}
-
-isnumber(){ test 2>/dev/null ${1:-a} -eq "${1##*[!0-9-]*}";}
+log "using file '$FILE', DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
 
 parse_report()
 {
@@ -79,11 +28,11 @@ parse_report()
 			'Bytes')
 				if isnumber "$word_old"; then
 					BYTES_TRANSFERED=$(( BYTES_TRANSFERED + word_old ))
-					logger -s "bytes: $word_old"
+					log "bytes: $word_old"
 					echo "# ip1: $IP1 ip2: $IP2 bytes: $word_old"
 				else
 					echo "# ip1: $IP1 ip2: $IP2 bytes: 0"
-					logger -s "bad bytes: '$word_old'"
+					log "bad bytes: '$word_old'"
 				fi
 
 				word_old=
@@ -110,18 +59,18 @@ do
 		# such a test does not make sense
 		continue
 	else
-		logger -s "IP1/server: $IP1 IP2/client: $IP2"
+		log "IP1/server: $IP1 IP2/client: $IP2"
 
 		# is needed, because 80211s is reactive
 		ping_ok "$IP1" || {
 			echo "# ip1: $IP1 ip2: $IP2 bytes: -2"
-			logger -s "IP1/server: unreachable, skipping"
+			log "IP1/server: unreachable, skipping"
 			continue
 		}
 
 		ping_ok "$IP2" || {
 			echo "# ip1: $IP1 ip2: $IP2 bytes: -3"
-			logger -s "IP2/client: unreachable, skipping"
+			log "IP2/client: unreachable, skipping"
 			continue
 		}
 	fi
@@ -137,4 +86,4 @@ do
 done <"$FILE"
 
 echo "# test1: $(date) - ready"
-logger -s "summary: good: $GOOD bad: $BAD BYTES_TRANSFERED: $BYTES_TRANSFERED"
+log "summary: good: $GOOD bad: $BAD BYTES_TRANSFERED: $BYTES_TRANSFERED"
