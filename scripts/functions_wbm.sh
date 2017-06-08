@@ -29,11 +29,13 @@ ping_ok()
 	local max=5
 	local i=1
 
+	log "trying to ping '$ip'"
 	while [ $i -lt $max ]; do {
 		ping -c1 "$ip" >/dev/null 2>/dev/null && return 0
 		i=$(( i + 1 ))
 	} done
 
+	log "ping failed: '$ip'"
 	return 1
 }
 

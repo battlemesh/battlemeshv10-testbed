@@ -17,7 +17,6 @@ else
 fi
 
 for IP in $LIST_IP; do
-	IP="$LINE"
 	[ -n "$USE_TEST_NETWORK" ] && IP="$( convert_management2test_ip "$IP" )"
 
 	if ping_ok "$IP"; then
