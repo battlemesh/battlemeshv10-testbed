@@ -5,6 +5,19 @@ log()
 	logger -s -- "$0: $*"
 }
 
+wifi_airtime_fairness()
+{
+	local action="$1"
+	local file value
+
+	case "$action" in
+		on) value='1' ;;
+		off) value='0' ;;
+	esac
+
+	for file in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo "$value" >"$file"; done
+}
+
 uptime_in_seconds()
 {
 	cut -d'.' -f1 /proc/uptime
@@ -41,8 +54,7 @@ execute_command_via_ssh()
 	# see: https://stackoverflow.com/questions/9393038/ssh-breaks-out-of-while-loop-in-bash
 	if [ -e "$mycommand" ]; then
 		log "sending file: '$mycommand'"
-		ssh -n \
-		    -o ConnectTimeout=10 \
+		ssh -o ConnectTimeout=10 \
 		    -o StrictHostKeyChecking=no \
 		    -o UserKnownHostsFile=/dev/null \
 			root@$ip 'ash -s' <"$mycommand"
@@ -59,6 +71,7 @@ execute_command_via_ssh()
 		isnumber "$GOOD" && GOOD=$(( GOOD + 1 ))
 		return 0
 	else
+		log "failed for ip: $ip"
 		isnumber "$BAD" && BAD=$(( BAD + 1 ))
 		return 1
 	fi
