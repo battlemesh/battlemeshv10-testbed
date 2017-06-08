@@ -5,6 +5,19 @@ log()
 	logger -s -- "$0: $*"
 }
 
+wifi_airtime_fairness()
+{
+	local action="$1"
+	local file value
+
+	case "$action" in
+		on) value='1' ;;
+		off) value='0' ;;
+	esac
+
+	for file in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo "$value" >"$file"; done
+}
+
 uptime_in_seconds()
 {
 	cut -d'.' -f1 /proc/uptime
