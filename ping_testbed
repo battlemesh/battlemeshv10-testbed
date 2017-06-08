@@ -31,3 +31,5 @@ log "GOOD: $GOOD BAD: $BAD routers"
 for IP in $LIST_FAILED; do
 	log "failed IP: '$IP'"
 done
+
+test -z "$LIST_FAILED"		# returncode = 0 if everything is ok

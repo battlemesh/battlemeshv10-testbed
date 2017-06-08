@@ -2,7 +2,7 @@
 . scripts/functions_wbm.sh
 
 FILE="${1:-./test1_ip_pairs.txt}"
-DURATION_OVERALL="${2:-900}"		# [seconds]
+DURATION_OVERALL="${2:-900}"		# [seconds] (for one complete run)
 DURATION_TEST="${3:-10}"		# [seconds]
 #
 FILE_REPORT="/tmp/myreport.$$"		# internally used only
@@ -51,11 +51,15 @@ parse_report()
 	[ -n "$word" ] || echo "# ip1: $IP1 ip2: $IP2 bytes: -1"
 }
 
-TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
-
 for PROTOCOL in babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2; do
+	./reboot_testbed ./routers
+	sleep 30
+	while ! ./ping_testbed; do sleep 1; done
 	./launch_new_protocol.sh '' $PROTOCOL
+	TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
+
 for AIRTIME_FAIRNESS in on off; do
+
 while read -r LINE
 do
 	[ $( uptime_in_seconds ) -gt $TIME_END ] && break
