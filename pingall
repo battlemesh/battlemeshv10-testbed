@@ -3,5 +3,5 @@
 cat $1 | while read -r line
 do
     ip="$line"
-    ping $ip &
+    ping -s 1 $ip &
 done
