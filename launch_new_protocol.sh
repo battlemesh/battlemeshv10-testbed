@@ -1,7 +1,7 @@
 #!/bin/bash
 . scripts/functions_wbm.sh
 
-FILE="${1:-./routers}"
+FILE="${1:-./routers}"		# or even give list of IPs
 PROTOCOL="$2"
 
 case "$PROTOCOL" in
@@ -15,7 +15,7 @@ case "$PROTOCOL" in
 	;;
 esac
 
-while read -r LINE
+cat "$FILE" | while read -r LINE
 do
 	IP="$LINE"
 	execute_command_via_ssh "$IP" "scripts/$PROTOCOL"
@@ -26,4 +26,4 @@ do
 	else
 		log "error switching to '$PROTOCOL'"
 	fi
-done <"$FILE"
+done
