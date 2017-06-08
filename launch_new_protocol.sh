@@ -18,7 +18,7 @@ esac
 while read -r LINE
 do
 	IP="$LINE"
-    	ssh -n -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$IP 'ash -s'< scripts/$PROTOCOL
+	execute_command_via_ssh "$IP" "scripts/$PROTOCOL"
 
 	if [ $? -eq 0 ]; then
 		echo "protocol '$PROTOCOL' launched on $IP"
