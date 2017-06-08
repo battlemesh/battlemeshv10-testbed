@@ -1,34 +1,29 @@
 #!/bin/bash
 
-ROUTERS=$1 # file with router list
 DEADNODE=$2 # IP address of the node to kill
 DATAFILE="/tmp/failuretest.txt"
 
-IP_LIST="\""
-for i in `cat $ROUTERS`;
-    do IP_LIST="$IP_LIST "$i;
-done
-IP_LIST=$IP_LIST"\""
-
-echo "IPS=$IP_LIST" > /tmp/failuretest.sh
-
-cat pingall.sh >> /tmp/failuretest.sh
-
 rm -f /tmp/pids.txt
+# management addresses
+#LEFT_NODES="10.0.8.1 10.0.9.1"
+#RIGHT_NODES="10.0.13.1 10.0.2.1"
+
+# test addresses
+LEFT_NODES="192.168.254.8 192.168.254.9"
+RIGHT_NODES="192.168.254.13 192.168.254.2"
 
 # Run the script in each node with a ssh session in bg 
-cat $ROUTERS | while read -r line
+for sip in $LEFT_NODES; 
 do
-    ip="$line"
-    if [ "$ip" != "$DEADNODE" ]; then
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip 'ash -s'< /tmp/failuretest.sh  & 
+   for dip in $RIGHT_NODES; do
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip 'ash -s'< ./pingall.sh $dip  & 
         echo $! >> /tmp/pids.txt
-        echo "sent pingall on router  $PIDS"
-    fi;
+        echo "sent pingall on router $sip"
+   done
 done
 
 # kill one node
-echo | ssh root@$DEADNODE reboot
+#echo | ssh root@$DEADNODE reboot
 
 # wait for all the SSH to exit
 for p in `cat /tmp/pids.txt`; do
@@ -49,10 +44,7 @@ echo "DONE!"
 
 # collect the datafiles from the routers
 echo "collcting datafiles from routers"
-cat $ROUTERS | while read -r line
+for sip in $LEFT_NODES; 
 do
-    ip="$line"
-    if [ "$ip" != "$DEADNODE" ]; then
-        scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip:$DATAFILE data/failuretest-$ip-$DEADNODE.txt
-    fi;
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/
 done

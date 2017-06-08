@@ -1,12 +1,8 @@
-PING_NUM=1
-DATAFILE="/tmp/failuretest.txt"
-RUNS=3
+DEST=$1
+DATAFILE="/tmp/failuretest-"`hostname`-"$DEST.txt"
 rm -f $DATAFILE
-
-for i in `seq 1 $RUNS`; do
-    for d in $IPS; do
-        echo "pinging $d"
-        ping -q -n -c $PING_NUM  $d |
-            awk -v host=$d '/packet loss/ {if ($7 != "0.0%") print host, $7}' >> $DATAFILE
-    done;
-done;
+PING_NUM=5
+rm -f $DATAFILE
+ping -q -n -c $PING_NUM  $DEST > /tmp/pingout.txt
+cat /tmp/pingout.txt | awk -v host=$DEST '/packet loss/ {if ($7 != "0.0%") print host, $7}' >> $DATAFILE
+cat /tmp/pingout.txt | awk -F '/' '{print $5}' >> $DATAFILE
