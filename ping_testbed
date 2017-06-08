@@ -11,4 +11,6 @@ do
 	ping -c 1 $IP || LIST_FAILED="$LIST_FAILED $IP"
 done <"$FILE"
 
-logger -s "failed IP's: '$LIST_FAILED'"
+for IP in $LIST_FAILED; do
+	logger -s "failed IP: '$IP'"
+done
