@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 addresses = [
+        '192.168.254.10',
         '192.168.254.1',
         '192.168.254.2',
         '192.168.254.3',
@@ -45,4 +46,4 @@ for p in sorted(paths.items(), key=lambda x: -x[1][0]):
 
 plt.plot(range(len(x)), y)
 plt.xticks(range(len(x)), x, rotation='vertical')
-plt.show()
+plt.savefig('topo.png')
