@@ -5,12 +5,12 @@ FILE="${1:-./routers}"		# or even give list of IPs
 PROTOCOL="$2"
 
 case "$PROTOCOL" in
-	babel|batman-adv|bmx7|olsr1|olsr2)
+	babel|batman-adv-4|batman-adv-5|bmx7|olsr1|olsr2)
 	;;
 	*)
 		log "Usage: $0 <ipfile or list of IPs> <protocol>"
 		log "		ipfile defaults to '$FILE'"
-		log "		protocol must be one of babel|batman-adv|bmx7|olsr1|olsr2"
+		log "		protocol must be one of babel|batman-adv-4|batman-adv-5|bmx7|olsr1|olsr2"
 		exit 1
 	;;
 esac
