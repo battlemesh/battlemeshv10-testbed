@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cat $1 | while read -r line
+do
+    ip="$line"
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null config-wdr/$ip/* root@$ip:/etc/config/
+    echo "$ip configuration updated"
+done

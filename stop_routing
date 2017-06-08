@@ -1,8 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-cat $1 | while read -r line
+FILE="$1"
+
+while read -r LINE
 do
-    ip="$line"
-    ssh root@$ip 'ash -s'< scripts/stop_routing.sh
-    echo "stopped routing on $ip"
-done
+    IP="$LINE"
+
+    ssh -o StrictHostKeyChecking=no \
+	-o UserKnownHostsFile=/dev/null \
+	root@$IP 'ash -s'< scripts/stop_routing.sh
+    echo "stopped routing on $IP"
+done <"$FILE"
