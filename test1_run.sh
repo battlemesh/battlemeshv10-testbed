@@ -9,9 +9,14 @@ FILE_REPORT="/tmp/myreport.$$"		# internally used only
 GOOD=0
 BAD=0
 BYTES_TRANSFERED=0
-read PROTO </tmp/MESHPROTO || PROTO='unknown'
 
-echo "# test1: $(date) protocol: $PROTO DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
+# here we are measuring data-transmission between 2 nodes
+# we iterate over a list of ~100 pairs.
+# we abort after e.g. 900 seconds
+# we measure one protocol after another
+# we measure with and without airtime fairness
+
+echo "# test1: $(date) DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
 log "using file '$FILE', DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
 
 parse_report()
@@ -48,6 +53,9 @@ parse_report()
 
 TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
 
+for PROTOCOL in babel batman-adv bmx7 olsr1 olsr2; do
+	./launch_new_protocol.sh '' $PROTOCOL
+for AIRTIME_FAIRNESS in on off; do
 while read -r LINE
 do
 	[ $( uptime_in_seconds ) -gt $TIME_END ] && break
@@ -75,15 +83,24 @@ do
 		}
 	fi
 
-	execute_command_via_ssh "$IP1" "killall iperf"
+	execute_command_via_ssh "$IP1" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >$F"
+	execute_command_via_ssh "$IP2" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >$F"
+	execute_command_via_ssh "$IP1" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown" >"$FILE_REPORT.proto1"
 	execute_command_via_ssh "$IP1" "iperf --server --daemon --print_mss"
-	execute_command_via_ssh "$IP2" "killall iperf"
+	execute_command_via_ssh "$IP2" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown" >"$FILE_REPORT.proto2"
 	execute_command_via_ssh "$IP2" "iperf --time $DURATION_TEST --client $( convert_management2test_ip "$IP1" ) --format bytes --dualtest --listenport 9001" >"$FILE_REPORT"
 	execute_command_via_ssh "$IP1" "killall iperf"
+
+	PROTO1=; read -r PROTO1 <"$FILE_REPORT.proto1"
+	PROTO2=; read -r PROTO2 <"$FILE_REPORT.proto2"
+	echo "# protocol: $PROTOCOL airtime_fairness: $AIRTIME_FAIRNESS"
+	[ "$PROTO1" != "$PROTO2" -o "$PROTO1" != "$PROTOCOL" ] && echo "# error: PROTO/1/2: $PROTOCOL/$PROTO1/$PROTO2"
 
 	parse_report "$FILE_REPORT"
 	rm -f "$FILE_REPORT"
 done <"$FILE"
+done
+done
 
 echo "# test1: $(date) - ready"
 log "summary: good: $GOOD bad: $BAD BYTES_TRANSFERED: $BYTES_TRANSFERED"
