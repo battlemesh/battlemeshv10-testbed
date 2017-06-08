@@ -1,15 +1,26 @@
 #!/bin/sh
 
 FILE="${1:-./routers}"
+USE_TEST_NETWORK="$2"		# <empty> or 'true'
 logger -s "using file '$FILE'"
 
 LIST_FAILED=
 BAD=0
 GOOD=0
 
+convert_management2test_ip()
+{
+	local ip="$1"			# e.g. 192.168.254.13
+	local octet4="$( echo "$ip" | cut -d'.' -f4 )"
+
+	echo "10.0.${octet4}.1"
+}
+
 while read -r LINE
 do
 	IP="$LINE"
+	[ -n "$USE_TEST_NETWORK" ] && IP="$( convert_management2test_ip "$IP" )"
+
 	if ping -c 1 $IP; then
 		GOOD=$(( GOOD + 1 ))
 	else
