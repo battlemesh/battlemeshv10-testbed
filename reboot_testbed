@@ -3,6 +3,5 @@
 cat $1 | while read -r line
 do
     ip="$line"
-    echo | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip reboot
-    echo "rebooted $ip"
+    echo | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip reboot | echo "rebooted $ip" &
 done
