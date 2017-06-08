@@ -4,11 +4,21 @@ FILE="${1:-./routers}"
 logger -s "using file '$FILE'"
 
 LIST_FAILED=
+BAD=0
+GOOD=0
 
 while read -r LINE
 do
 	IP="$LINE"
-	ping -c 1 $IP || LIST_FAILED="$LIST_FAILED $IP"
+	if ping -c 1 $IP; then
+		GOOD=$(( GOOD + 1 ))
+	else
+		BAD=$(( BAD + 1 ))
+		LIST_FAILED="$LIST_FAILED $IP"
+	fi
 done <"$FILE"
 
-logger -s "failed IP's: '$LIST_FAILED'"
+logger -s "GOOD: $GOOD BAD: $BAD routers"
+for IP in $LIST_FAILED; do
+	logger -s "failed IP: '$IP'"
+done
