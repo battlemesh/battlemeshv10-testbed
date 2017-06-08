@@ -137,7 +137,7 @@ Interface "wlan1"
 
 Hna6
 {
-  fc00::$HOSTNUMBER/64
+  fc00:$HOSTNUMBER::/64
 }
 
 IpcConnect
