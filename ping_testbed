@@ -1,34 +1,13 @@
 #!/bin/sh
+. scripts/functions_wbm.sh
 
 FILE="${1:-./routers}"
 USE_TEST_NETWORK="$2"		# <empty> or 'true'
-logger -s "using file '$FILE'"
+log "using file '$FILE'"
 
 LIST_FAILED=
 BAD=0
 GOOD=0
-
-convert_management2test_ip()
-{
-	local ip="$1"			# e.g. 192.168.254.13
-	local octet4="$( echo "$ip" | cut -d'.' -f4 )"
-
-	echo "10.0.${octet4}.1"
-}
-
-ping_ok()
-{
-	local ip="$1"
-	local max=5
-	local i=1
-
-	while [ $i -lt $max ]; do {
-		ping -c1 "$ip" >/dev/null 2>/dev/null && return 0
-		i=$(( i + 1 ))
-	} done
-
-	return 1
-}
 
 while read -r LINE
 do
@@ -43,7 +22,7 @@ do
 	fi
 done <"$FILE"
 
-logger -s "GOOD: $GOOD BAD: $BAD routers"
+log "GOOD: $GOOD BAD: $BAD routers"
 for IP in $LIST_FAILED; do
-	logger -s "failed IP: '$IP'"
+	log "failed IP: '$IP'"
 done
