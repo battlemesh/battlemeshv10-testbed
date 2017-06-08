@@ -5,4 +5,5 @@ do
     ip="$line"
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip 'ash -s'< scripts/batadv
     echo "batman launched on $ip"
+    echo 'batman-adv' >/tmp/MESHPROTO
 done

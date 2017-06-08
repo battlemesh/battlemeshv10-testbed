@@ -5,4 +5,5 @@ do
     ip="$line"
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip 'ash -s'< scripts/bmx7
     echo "bmx7 launched on $ip"
+    echo 'bmx7' >/tmp/MESHPROTO
 done
