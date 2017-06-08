@@ -5,4 +5,5 @@ do
     ip="$line"
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip 'ash -s'< ../scripts/olsr1
     echo "olsrv1 launched on $ip"
+    echo 'olsr1' >/tmp/MESHPROTO
 done
