@@ -1,9 +1,0 @@
-#!/bin/bash
-
-cat $1 | while read -r line
-do
-    ip="$line"
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip 'ash -s'< scripts/olsrdv1
-    echo "olsrv1 launched on $ip"
-    echo 'olsr1' >/tmp/MESHPROTO
-done
