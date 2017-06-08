@@ -53,7 +53,7 @@ parse_report()
 
 TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
 
-for PROTOCOL in babel batman-adv bmx7 olsr1 olsr2; do
+for PROTOCOL in babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2; do
 	./launch_new_protocol.sh '' $PROTOCOL
 for AIRTIME_FAIRNESS in on off; do
 while read -r LINE
