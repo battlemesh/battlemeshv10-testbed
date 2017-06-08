@@ -37,17 +37,17 @@ execute_command_via_ssh()
 	local ip="$1"
 	local mycommand="$2"		# can be a single command or a file
 
-	log "sending command to $ip: $mycommand"
-
 	# ssh will eat stdin, so a 'while read' breaks, we must use '-n'
 	# see: https://stackoverflow.com/questions/9393038/ssh-breaks-out-of-while-loop-in-bash
 	if [ -e "$mycommand" ]; then
+		log "sending file: '$mycommand'"
 		ssh -n \
 		    -o ConnectTimeout=10 \
 		    -o StrictHostKeyChecking=no \
 		    -o UserKnownHostsFile=/dev/null \
-			'ash -s'<"$mycommand"
+			root@$ip 'ash -s' <"$mycommand"
 	else
+		log "sending command to $ip: $mycommand"
 		ssh -n \
 		    -o ConnectTimeout=10 \
 		    -o StrictHostKeyChecking=no \
