@@ -1,0 +1,21 @@
+{
+  "name": "nodemap",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "color": "^1.0.3",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "svg-to-react": "^0.1.0"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "postbuild": "find . -name '*.map' -type f -delete",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
