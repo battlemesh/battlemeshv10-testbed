@@ -1,9 +1,0 @@
-#!/bin/bash
-
-cat $1 | while read -r line
-do
-    ip="$line"
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null olsrv2_pkg/oonf-olsrd2_0.14.0_mips_24kc.ipk root@$ip:/tmp/
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null opkg install /tmp/oonf-olsrd2_0.14.0_mips_24kc.ipk && rm /tmp/oonf-olsrd2_0.14.0_mips_24kc.ipk
-    echo "olsrv2 updated on $ip"
-done
