@@ -5,7 +5,7 @@
 # later we iterate over that list, starting a data-transmission
 # and measuring the transfered bytes. this is done for each protocol.
 
-FILE_IPLIST='./routers'
+FILE_IPLIST="${1:-./routers}"
 OUT='./test1_ip_pairs.txt'
 
 random_integer()
