@@ -172,5 +172,7 @@ EOF
 olsrd -f /etc/olsrd/olsrd.conf
 olsrd -f /etc/olsrd/olsrd.6.conf
 
+kilall -q iperf
+sleep 1
+
 iperf -s -V -D &
-iperf -s -D &

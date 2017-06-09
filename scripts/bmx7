@@ -28,5 +28,7 @@ bmx7 -c unicastHna=fc00:$HOSTNUMBER::/64
 bmx7 -c tunDev=main /tun4Address 10.0.$HOSTNUMBER.1/24
 bmx7 -c tunOut=v4out /network 10.0.0.0/8
 
+kilall -q iperf
+sleep 1
+
 iperf -s -V -D &
-iperf -s -D &
