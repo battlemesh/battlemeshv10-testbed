@@ -26,7 +26,7 @@ brctl addif br-testbed bat0
 ip addr add ${ipv4}/16 dev ${testbed_if}
 ip -6 addr add ${ipv6}/16 dev ${testbed_if}
 
-kilall -q iperf
+killall -q iperf
 sleep 1
 
 iperf -s -V -D &

@@ -35,7 +35,7 @@ EOF
 
 olsrd2 --load /tmp/olsrd2.conf --set global.fork=true
 
-kilall -q iperf
+killall -q iperf
 sleep 1
 
 iperf -s -V -D &

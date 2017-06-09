@@ -28,7 +28,7 @@ bmx7 -c tunDev=main /tun4Address 10.0.$HOSTNUMBER.1/24 /tun6Address fc00:$HOSTNU
 bmx7 -c tunOut=v4out /network 10.0.0.0/8
 bmx7 -c tunOut=v6out /network fc00::/16
 
-kilall -q iperf
+killall -q iperf
 sleep 1
 
 iperf -s -V -D &
