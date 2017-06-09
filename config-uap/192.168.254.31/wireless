@@ -1,7 +1,7 @@
 
 config wifi-device 'radio1'
 	option type 'mac80211'
-	option channel '1'
+	option channel '9'
 	option hwmode '11g'
 	option path 'platform/qca956x_wmac'
 	option htmode 'HT20'
