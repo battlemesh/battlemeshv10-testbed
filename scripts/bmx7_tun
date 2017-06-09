@@ -23,10 +23,10 @@ killall -q bmx7
 sleep 1
 #ip link set wlan1 up
 
-bmx7  plugin=bmx7_tun.so plugin=bmx7_iwinfo.so dev=wlan1
-bmx7 -c unicastHna=fc00:$HOSTNUMBER::/64
-bmx7 -c tunDev=main /tun4Address 10.0.$HOSTNUMBER.1/24
+bmx7 plugin=bmx7_tun.so plugin=bmx7_iwinfo.so dev=wlan1
+bmx7 -c tunDev=main /tun4Address 10.0.$HOSTNUMBER.1/24 /tun6Address fc00:$HOSTNUMBER::1/64
 bmx7 -c tunOut=v4out /network 10.0.0.0/8
+bmx7 -c tunOut=v6out /network fc00::/16
 
 killall -q iperf
 sleep 1
