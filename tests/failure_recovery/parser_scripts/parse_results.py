@@ -2,7 +2,7 @@
 import glob
 from collections import defaultdict
 
-data_path = "../data/failure*"
+data_path = "../data/failure*txt"
 
 file_list = glob.glob(data_path)
 

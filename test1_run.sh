@@ -12,15 +12,17 @@ BAD=0
 BYTES_TRANSFERED=0
 
 # here we are measuring data-transmission between 2 nodes
-# we iterate over a list of ~100 pairs.
-# we abort after e.g. 900 seconds
+# we iterate over a list of ~100 pairs. (see arg1 = $FILE)
+# we abort after e.g. 900 seconds (see arg2 = $DURATION_OVERALL)
 # we measure one protocol after another
 # we measure with and without airtime fairness
+# all values are printed to STDOUT, so redirect to e.g. >results.txt
+# debug values are printed during the test to STDERR
 
 echo "# test1: $(date) DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
 log "using file '$FILE', DURATION_OVERALL: $DURATION_OVERALL DURATION_TEST: $DURATION_TEST"
 
-parse_report()
+parse_iperf_report()
 {
 	local file="$1"
 	local word word_old
@@ -105,7 +107,7 @@ do
 	echo "# protocol: $PROTOCOL airtime_fairness: $AIRTIME_FAIRNESS"
 	[ "$PROTO1" != "$PROTO2" -o "$PROTO1" != "$PROTOCOL" ] && echo "# error: PROTO/1/2: $PROTOCOL/$PROTO1/$PROTO2"
 
-	parse_report "$FILE_REPORT"
+	parse_iperf_report "$FILE_REPORT"
 	rm -f "$FILE_REPORT"
 done <"$FILE"
 done
