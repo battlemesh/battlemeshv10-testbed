@@ -5,5 +5,5 @@ do
     ip="$line"
     scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $2 root@$ip:/tmp/
     echo| ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$ip "opkg --force-reinstall install /tmp/$2 && rm /tmp/$2"
-    echo "olsrv2 updated on $ip"
+    echo "packet deployed on $ip"
 done

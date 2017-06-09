@@ -171,3 +171,6 @@ EOF
 
 olsrd -f /etc/olsrd/olsrd.conf
 olsrd -f /etc/olsrd/olsrd.6.conf
+
+iperf -s -V -D &
+iperf -s -D &

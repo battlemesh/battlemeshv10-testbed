@@ -13,3 +13,5 @@ ip addr add $ipv4 dev wlan1
 ip addr add $ipv6 dev wlan1
 
 babeld -d 4 -C 'redistribute local deny' -C 'redistribute if wlan1 allow' wlan1 &
+iperf -s -V -D &
+iperf -s -D &
