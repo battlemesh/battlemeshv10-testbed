@@ -1,7 +1,7 @@
 #!/bin/bash
 . scripts/functions_wbm.sh
 
-FILE="${1:-./routers}"		# or even give list of IPs
+FILE="${1:-./wdr4300}"		# or even give list of IPs
 PROTOCOL="$2"
 
 case "$PROTOCOL" in

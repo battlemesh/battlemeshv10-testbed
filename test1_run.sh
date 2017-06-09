@@ -5,6 +5,7 @@ FILE="${1:-./test1_ip_pairs.txt}"
 DURATION_OVERALL="${2:-900}"		# [seconds] (for one complete run)
 DURATION_TEST="${3:-10}"		# [seconds]
 #
+FILE_IPLIST='./wdr4300'
 FILE_REPORT="/tmp/myreport.$$"		# internally used only
 GOOD=0
 BAD=0
@@ -52,17 +53,21 @@ parse_report()
 }
 
 for PROTOCOL in babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2; do
-	./reboot_testbed ./routers
-	sleep 30
-	while ! ./ping_testbed; do sleep 1; done
-	./launch_new_protocol.sh '' $PROTOCOL
+	./reboot_testbed "$FILE_IPLIST"
+	log "sleeping for 30 sec"; sleep 30
+	while ! ./ping_testbed "$FILE_IPLIST"; do sleep 1; done
+	./launch_new_protocol.sh "$FILE_IPLIST" "$PROTOCOL"
+	log "sleeping for 30 sec"; sleep 30
 	TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
 
 for AIRTIME_FAIRNESS in on off; do
 
 while read -r LINE
 do
-	[ $( uptime_in_seconds ) -gt $TIME_END ] && break
+	[ $( uptime_in_seconds ) -gt $TIME_END ] && {
+		echo "# abort time: $TIME_END"
+		break
+	}
 
 	set -- $LINE
 	IP1="$1"
@@ -87,16 +92,16 @@ do
 		}
 	fi
 
-	execute_command_via_ssh "$IP1" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >$F"
-	execute_command_via_ssh "$IP2" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >$F"
-	execute_command_via_ssh "$IP1" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown" >"$FILE_REPORT.proto1"
+	execute_command_via_ssh "$IP1" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >\$F; done"
+	execute_command_via_ssh "$IP2" "for F in /sys/kernel/debug/ieee80211/phy*/*/airtime_flags; do echo $AIRTIME_FAIRNESS >\$F; done"
+	execute_command_via_ssh "$IP1" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown'" >"$FILE_REPORT.proto1"
 	execute_command_via_ssh "$IP1" "iperf --server --daemon --print_mss"
-	execute_command_via_ssh "$IP2" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown" >"$FILE_REPORT.proto2"
+	execute_command_via_ssh "$IP2" "killall iperf; cat /tmp/MESHPROTO || echo 'unknown'" >"$FILE_REPORT.proto2"
 	execute_command_via_ssh "$IP2" "iperf --time $DURATION_TEST --client $( convert_management2test_ip "$IP1" ) --format bytes --dualtest --listenport 9001" >"$FILE_REPORT"
 	execute_command_via_ssh "$IP1" "killall iperf"
 
-	PROTO1=; read -r PROTO1 <"$FILE_REPORT.proto1"
-	PROTO2=; read -r PROTO2 <"$FILE_REPORT.proto2"
+	PROTO1=; read -r PROTO1 <"$FILE_REPORT.proto1"; test -z "$PROTO1" && PROTO1=$PROTOCOL	# FIXME
+	PROTO2=; read -r PROTO2 <"$FILE_REPORT.proto2"; test -z "$PROTO2" && PROTO2=$PROTOCOL
 	echo "# protocol: $PROTOCOL airtime_fairness: $AIRTIME_FAIRNESS"
 	[ "$PROTO1" != "$PROTO2" -o "$PROTO1" != "$PROTOCOL" ] && echo "# error: PROTO/1/2: $PROTOCOL/$PROTO1/$PROTO2"
 

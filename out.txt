@@ -1,0 +1,39 @@
+# test1: Fr 9. Jun 10:22:33 CEST 2017 DURATION_OVERALL: 900 DURATION_TEST: 10
+192.168.254.1 rebooted
+192.168.254.2 rebooted
+192.168.254.3 rebooted
+192.168.254.4 rebooted
+192.168.254.5 rebooted
+192.168.254.6 rebooted
+192.168.254.7 rebooted
+192.168.254.8 rebooted
+192.168.254.9 rebooted
+192.168.254.10 rebooted
+192.168.254.11 rebooted
+192.168.254.12 rebooted
+192.168.254.13 rebooted
+192.168.254.14 rebooted
+192.168.254.15 rebooted
+192.168.254.16 rebooted
+192.168.254.17 rebooted
+protocol 'babel' launched on 192.168.254.1
+protocol 'babel' launched on 192.168.254.2
+protocol 'babel' launched on 192.168.254.3
+protocol 'babel' launched on 192.168.254.4
+protocol 'babel' launched on 192.168.254.5
+protocol 'babel' launched on 192.168.254.6
+protocol 'babel' launched on 192.168.254.7
+protocol 'babel' launched on 192.168.254.8
+protocol 'babel' launched on 192.168.254.9
+protocol 'babel' launched on 192.168.254.10
+protocol 'babel' launched on 192.168.254.11
+protocol 'babel' launched on 192.168.254.12
+protocol 'babel' launched on 192.168.254.13
+protocol 'babel' launched on 192.168.254.14
+protocol 'babel' launched on 192.168.254.15
+protocol 'babel' launched on 192.168.254.16
+protocol 'babel' launched on 192.168.254.17
+# protocol: babel airtime_fairness: on
+# ip1: 192.168.254.1 ip2: 192.168.254.16 bytes: -1
+# protocol: babel airtime_fairness: on
+# ip1: 192.168.254.10 ip2: 192.168.254.12 bytes: -1
