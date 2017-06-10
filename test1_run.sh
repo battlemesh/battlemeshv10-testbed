@@ -64,7 +64,7 @@ for PROTOCOL in $PROTOCOL_LIST; do
 	log "sleeping for 30 sec"; sleep 30
 	TIME_END=$(( $( uptime_in_seconds ) + DURATION_OVERALL ))
 
-for AIRTIME_FAIRNESS in on off; do
+for AIRTIME_FAIRNESS in 7 0; do		# 7 = on | 0 = off | other values (e.g. 'on' or 'off' result into 'off'
 
 while read -r LINE
 do
