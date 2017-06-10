@@ -5,4 +5,4 @@ if [ $2 == 1 ];
 	then
 	rm $IPERFOUT;
 	fi
-iperf -f M -y C -t 20 -e -V -c $DEST | tail -n 2 >> $IPERFOUT
+iperf -f M -y C -t 10 -e -V -c $DEST | tail -n 2 >> $IPERFOUT

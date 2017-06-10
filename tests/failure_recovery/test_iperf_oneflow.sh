@@ -26,7 +26,7 @@ do
 	echo $! >> /tmp/pids.txt
 	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES2 'ash -s'< ./iperf.sh $NODED2 $st &
 	echo $! >> /tmp/pids.txt
-	sleep 10
+	sleep 20
 done
 
 # kill one node
