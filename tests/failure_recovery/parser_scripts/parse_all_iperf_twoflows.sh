@@ -1,5 +1,7 @@
 #!/bin/bash
-for folder in BABEL  BATMAN4  BATMAN5  BMX7  BMX7TUN  OLSRv1  OLSRv2  OLSRv2_MPR; do
-    ./parse_iperf.py ../data/$folder/failuretest-iperf-node > ../parsed_data/$folder-IPv6-iperf-fiveflows.txt
-done
 
+for directory in $(find ../iperf-data-with-two-flows/ -type 'd'); do
+    folder=$(basename $directory)
+    echo $folder
+    ./parse_iperf.py ../iperf-data-with-two-flows/$folder/failuretest-iperf-node > ../parsed_data/$folder-IPv6-twoflow.txt
+done
