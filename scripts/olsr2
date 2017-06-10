@@ -31,6 +31,8 @@ cat > /tmp/olsrd2.conf << EOF
 
 [interface=lo]
 [interface=wlan1]
+	hello_interval	1.0
+	hello_validity	10.0
 EOF
 
 olsrd2 --load /tmp/olsrd2.conf --set global.fork=true
