@@ -1,0 +1,58 @@
+
+%misc
+\newcommand{\un}{\uncover<+->}
+\newenvironment{code}{\footnotesize\verbatim}{\endverbatim}
+% item e boxes
+
+\newcommand{\bii}{\begin{itemize}[<+->]}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ii}{\item}
+
+\newcommand{\bd}{\begin{description}}
+\newcommand{\ed}{\end{description}}
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+
+\newcommand{\bab}[1]{\begin{alertblock}{#1}}
+\newcommand{\eab}{\end{alertblock}}
+\newcommand{\beb}[1]{\begin{exampleblock}{#1}}
+\newcommand{\eeb}{\end{exampleblock}}
+\newcommand{\bbox}{\begin{beamerboxesrounded}}
+\newcommand{\ebox}{\end{beamerboxesrounded}}
+
+%\newcommand{\titledframe}[2]{%
+%\boxput*(0,1){\psframebox*{#1}}%
+%{\psframebox[framesep=12pt]{#2}}}
+
+\newcommand{\titledframe}[2]{%
+  \boxput*(0,1){#1}%
+    {\fboxsep=12pt \fbox{#2}}}
+
+\newcommand{\mycomment}[2]{
+\ifdraft
+\vskip10pt
+\titledframe{#1}{%
+\parbox{0.8\columnwidth}{#2}
+}
+\else
+\fi
+}
+
+% Use like this:
+%
+%\mycomment{titoloblocco}{
+%\bi
+%\ii  Prova
+%\ii di
+%\ii commento
+%\ei
+%}
+%\fixme{BLABLA}
+% no present with make final
+
+% just back-compatibility
+\renewcommand{\fixme}[1]{
+\fxfatal[marginclue, footnote]{#1}
+}
+
