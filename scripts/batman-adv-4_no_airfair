@@ -1,0 +1,37 @@
+#!/bin/sh
+
+#
+# batman-adv
+#
+
+echo 0 > /sys/kernel/debug/ieee80211/phy1/ath9k/airtime_flags
+sleep 2
+
+testbed_if="br-testbed"
+
+ipv4=$(ip -o addr show dev br-testbed|grep inet\ | awk '{print $4}' | sed -e s@/[0-9]*@@)
+ipv6=$(ip -o addr show dev br-testbed|grep inet6\ fc | awk '{print $4}' | sed -e s@/[0-9]*@@)
+
+echo "testing IPs: v4=${ipv4} v6=${ipv6}"
+
+# remove addresses from br-testbed
+ip addr del ${ipv4}/24 dev ${testbed_if}
+ip -6 addr del ${ipv6}/64 dev ${testbed_if}
+
+# setup batman-adv
+ip link set wlan1 up
+batctl if add wlan1
+ifconfig bat0 up
+brctl addif br-testbed bat0
+
+# re-add addresses with broader network
+ip addr add ${ipv4}/16 dev ${testbed_if}
+ip -6 addr add ${ipv6}/16 dev ${testbed_if}
+
+killall -q iperf
+sleep 1
+
+iperf -s -V -D &
+
+
+echo "batman-adv configuration completed."

@@ -1,0 +1,41 @@
+#!/bin/ash
+
+#
+# olsrd v2
+#
+
+echo 0 > /sys/kernel/debug/ieee80211/phy1/ath9k/airtime_flags
+sleep 2
+
+# safe mem+confusion:
+rmmod batman_adv
+
+killall -q olsrd2
+sleep 1
+
+ipv4=`ip -o addr show dev br-testbed|grep inet\ | awk '{print $4}' | sed -e s@/[0-9]*@/32@`
+ipv6=`ip -o addr show dev br-testbed|grep inet6\ fc | awk '{print $4}' | sed -e s@/[0-9]*@/128@`
+
+echo "loopback: ${ipv4} ${ipv6}"
+ip addr add ${ipv4} dev lo
+ip -6 addr add ${ipv6} dev lo
+ip link set wlan1 up
+
+cat > /tmp/olsrd2.conf << EOF
+[http]
+	bindto		0.0.0.0
+[lan_import=1]
+	interface	br-testnet
+
+[interface=lo]
+[interface=wlan1]
+	hello_interval		1.0
+	hello_validity		10.0
+EOF
+
+olsrd2 --load /tmp/olsrd2.conf --set global.fork=true
+
+killall -q iperf
+sleep 1
+
+iperf -s -V -D &
