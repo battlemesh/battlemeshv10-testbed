@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/bin/env python2
 import glob
 from collections import defaultdict
 import numpy as np
