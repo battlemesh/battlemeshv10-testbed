@@ -15,9 +15,9 @@ NODED2="fc00:2::1"
 # Run the script in each node with a ssh session in bg 
 for st in 1 2 3 4 5
 do
-	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES1 'ash -s'< ./iperf.sh $NODED1 &
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES1 'ash -s'< ./iperf.sh $NODED1 $st &
 	echo $! >> /tmp/pids.txt
-	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES2 'ash -s'< ./iperf.sh $NODED2 &
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES2 'ash -s'< ./iperf.sh $NODED2 $st &
 	echo $! >> /tmp/pids.txt
 	sleep 10
 done
