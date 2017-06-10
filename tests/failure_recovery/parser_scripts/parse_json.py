@@ -2,24 +2,24 @@ import json
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
-
-addresses = [
-        '192.168.254.10',
-        '192.168.254.1',
-        '192.168.254.2',
-        '192.168.254.3',
-        '192.168.254.4',
-        '192.168.254.5']
-
-os.system('rm NetworkGraph')
-for i in addresses:
-    if not os.system("wget 192.168.254.10:2005/NetworkGraph"):
-        break
-
+#
+#addresses = [
+#        '192.168.254.10',
+#        '192.168.254.1',
+#        '192.168.254.2',
+#        '192.168.254.3',
+#        '192.168.254.4',
+#        '192.168.254.5']
+#
+#os.system('rm NetworkGraph')
+#for i in addresses:
+#    if not os.system("wget 192.168.254.10:2005/NetworkGraph"):
+#        break
+#
 
 g = nx.DiGraph()
 
-with open('NetworkGraph') as json_data:
+with open('NetworkGraph-10dbm.json') as json_data:
     d = json.load(json_data)
 
 for node in d['nodes']:

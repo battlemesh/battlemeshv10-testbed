@@ -9,7 +9,8 @@ set xlabel "Paths"
 
 set xrange [-1:3]
 set xtics ("8-17" 0.25, "9-2" 2.25)
-set title "Transmitted Data, 10 iperf sessions (10s each), one flow 5Mb (14->10)"
+set yrange [0:9000000]
+set title "Transmitted Data, 10 iperf (10s each), one flow 5Mb (14->10)"
 set ylabel "Bytes (10percent-median-90percent)"
 set key outside right
 
