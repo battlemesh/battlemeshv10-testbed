@@ -93,11 +93,21 @@ plot "../parsed_data/OLSRv1-IPv6.txt" i 1 u 0:1 with lp title "OLSRv1" lw 3,\
 "../parsed_data/BMX7-IPv6.txt" i 1 u 0:1 with lp title "BMX7" lw 3,\
 "../parsed_data/BMX7TUN-IPv6.txt" i 1 u 0:1 with lp title "BMX7TUN" lw 3
 
+unset logscale
+set xrange [-1:3]
+set xtics ("8-17" 0.25, "9-2" 1.25)
+set ylabel "Transmitted Data"
+set key outside right
 
-#
-#"../parsed_data/OLSRv2-IPv6.txt" every ::1 u ($0+0.1):3 with boxes title "OLSRv2" lw 3,\
-#"../parsed_data/BATMAN4-IPv6.txt" every ::1 u ($0+0.2):3 with boxes title "BATMAN4" lw 3,\
-#"../parsed_data/BATMAN5-IPv6.txt" every ::1 u ($0+0.3):3 with boxes title "BATMAN5" lw 3,\
-#"../parsed_data/BABEL-IPv6.txt" every ::1 u ($0+0.4):3 with boxes title "BABEL" lw 3,\
-#"../parsed_data/BMX7-IPv6.txt" every ::1 u ($0+0.5):3 with boxes title "BMX7" lw 3
-#
+set output "../graphs/failure_test_iperf-IPv6.png"
+plot "../parsed_data/OLSRv1-IPv6-iperf.txt" i 0 u 0:3 with p title "OLSRv1" lw 3,\
+"../parsed_data/OLSRv2-IPv6-iperf.txt" i 0 u ($0+0.1):3 with p title "OLSRv2" lw 3,\
+"../parsed_data/BABEL-IPv6-iperf.txt" i 0 u ($0+0.2):3 with p title "BABEL" lw 3,\
+"../parsed_data/BMX7-IPv6-iperf.txt" i 0 u ($0+0.3):3 with p title "BMX7" lw 3,\
+"../parsed_data/BMX7TUN-IPv6-iperf.txt" i 0 u ($0+0.4):3 with p title "BMX7TUN" lw 3,\
+"../parsed_data/BATMAN4-IPv6-iperf.txt" i 0 u ($0+0.5):3 with p title "BATMAN4" lw 3,\
+"../parsed_data/BATMAN5-IPv6-iperf.txt" i 0 u ($0+0.6):3 with p title "BATMAN5" lw 3
+
+
+
+

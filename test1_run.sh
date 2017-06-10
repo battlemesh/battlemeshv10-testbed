@@ -4,6 +4,8 @@
 FILE="${1:-./test1_ip_pairs.txt}"
 DURATION_OVERALL="${2:-900}"		# [seconds] (for one complete run)
 DURATION_TEST="${3:-10}"		# [seconds]
+PROTOCOL_LIST='babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2'
+# PROTOCOL_LIST=olsr1
 #
 FILE_IPLIST='./wdr4300'
 FILE_REPORT="/tmp/myreport.$$"		# internally used only
@@ -54,7 +56,7 @@ parse_iperf_report()
 	[ -n "$word" ] || echo "# ip1: $IP1 ip2: $IP2 bytes: -1"
 }
 
-for PROTOCOL in babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2; do
+for PROTOCOL in $PROTOCOL_LIST; do
 	./reboot_testbed "$FILE_IPLIST"
 	log "sleeping for 30 sec"; sleep 30
 	while ! ./ping_testbed "$FILE_IPLIST"; do sleep 1; done
