@@ -84,4 +84,20 @@ for i in range(max_length):
     print ""
 
 
+print ""
+print ""
+for s in data:
+    for d in data[s]:
+        print s, d, ",",
+
+print ""
+for i in range(max_length):
+    for s in data:
+        for d, numbers in data[s].items():
+            try:
+                print numbers['entries'][i], ",",
+            except IndexError:
+                print ",",
+    print ""
+
 
