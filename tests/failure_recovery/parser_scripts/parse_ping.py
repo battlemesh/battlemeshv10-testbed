@@ -12,7 +12,9 @@ file_list = glob.glob(data_path)
 data = defaultdict(dict)
 
 for f in file_list:
-    tokens = f.split("-")
+    tokens0 = f.split("/")
+    tokens1 = tokens0[-1]
+    tokens = tokens1.split("-")
     s = tokens[1]
     d = '.'.join(tokens[2].split(".")[:-1])
     data[s][d] = {}
