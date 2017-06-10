@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEADNODE=$2 # IP address of the node to kill
+OUTFOLDER=$1 # IP address of the node to kill
 DATAFILE="/tmp/failuretest.txt"
 
 rm -f /tmp/pids.txt
@@ -46,6 +46,6 @@ echo "DONE!"
 echo "collcting datafiles from routers"
 for sip in $LEFT_NODES; 
 do
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/$OUTFOLDER
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip rm /tmp/failuretest*
 done
