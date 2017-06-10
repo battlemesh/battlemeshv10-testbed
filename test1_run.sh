@@ -4,8 +4,9 @@
 FILE="${1:-./test1_ip_pairs.txt}"
 DURATION_OVERALL="${2:-900}"		# [seconds] (for one complete run)
 DURATION_TEST="${3:-10}"		# [seconds]
-#
 PROTOCOL_LIST='babel batman-adv-4 batman-adv-5 bmx7 olsr1 olsr2'
+# PROTOCOL_LIST=olsr1
+#
 FILE_IPLIST='./wdr4300'
 FILE_REPORT="/tmp/myreport.$$"		# internally used only
 GOOD=0
