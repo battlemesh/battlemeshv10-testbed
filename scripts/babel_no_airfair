@@ -1,0 +1,23 @@
+#!sh
+
+# safe mem+confusion:
+rmmod batman_adv
+
+echo 0 > /sys/kernel/debug/ieee80211/phy1/ath9k/airtime_flags
+sleep 2
+
+killall -q babeld
+sleep 1
+
+ipv4=`ip -o addr show dev br-testbed|grep inet\ | awk '{print $4}' | sed -e s@/[0-9]*@/32@`
+ipv6=`ip -o addr show dev br-testbed|grep inet6\ fc | awk '{print $4}' | sed -e s@/[0-9]*@/128@`
+
+ip addr add $ipv4 dev wlan1
+ip addr add $ipv6 dev wlan1
+
+babeld -d 4 -C 'redistribute local deny' -C 'redistribute if wlan1 allow' wlan1 &
+
+killall -q iperf
+sleep 1
+
+iperf -s -V -D &

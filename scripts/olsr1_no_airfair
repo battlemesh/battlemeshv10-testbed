@@ -1,0 +1,180 @@
+#!/bin/ash
+
+echo 0 > /sys/kernel/debug/ieee80211/phy1/ath9k/airtime_flags
+sleep 2
+
+REGEX='^[[:space:]]*node([[:digit:]]+)[[:space:]]*$'
+HOSTNUMBER="$(hostname | \
+  grep -iE "$REGEX" | \
+  sed -r "s#$REGEX#\1#")"
+
+if [[ -z "$HOSTNUMBER" ]]; then
+  echo "ERROR: host number not found"
+  exit 1
+fi
+
+echo "Host : $HOSTNUMBER"
+
+
+
+
+
+
+#
+# olsrd v1
+#
+
+# safe mem+confusion:
+rmmod batman_adv
+
+killall -q olsrd
+sleep 1
+
+echo "WLAN1: 10.254.0.$HOSTNUMBER/24"
+echo "       fc01::$HOSTNUMBER/64"
+
+ip link set wlan1 up
+ip address add 10.254.0.$HOSTNUMBER/24 dev wlan1
+ip address add fc01::$HOSTNUMBER/64 dev wlan1
+
+echo "Generating olsrd v1 configuration"
+
+mkdir -p /etc/olsrd
+
+cat > /etc/olsrd/olsrd.conf << EOF
+#####################################################
+# OLSR.org routing daemon config file
+#####################################################
+
+DebugLevel                                 0
+IpVersion                                  4
+OlsrPort                                   698
+TosValue                                   224
+LinkQualityFishEye                         0
+MprCoverage                                1
+LockFile                                   "/var/run/olsrd.lock"
+MainIp                                     10.254.0.$HOSTNUMBER
+LinkQualityAlgorithm                       "etx_ffeth"
+
+InterfaceDefaults
+{
+  HelloInterval                            2.00
+  HelloValidityTime                        20.00
+  TcInterval                               5.00
+  TcValidityTime                           30.00
+  MidInterval                              5.00
+  MidValidityTime                          50.00
+  HnaInterval                              5.00
+  HnaValidityTime                          15.00
+}
+
+Interface "wlan1"
+{
+}
+
+Hna4
+{
+  10.0.$HOSTNUMBER.0/24
+}
+
+IpcConnect
+{
+}
+
+#####################################################
+# Plugins
+#####################################################
+
+LoadPlugin "/usr/lib/olsrd_netjson.so.1.1"
+{
+  PlParam "Accept"                         "0.0.0.0"
+  PlParam "port"                           "2005"
+}
+
+LoadPlugin "/usr/lib/olsrd_txtinfo.so.1.1"
+{
+  PlParam "Accept"                         "0.0.0.0"
+  PlParam "port"                           "2006"
+  PlParam "httpheaders"                    "false"
+}
+
+LoadPlugin "/usr/lib/olsrd_jsoninfo.so.1.1"
+{
+  PlParam "Accept"                         "0.0.0.0"
+  PlParam "port"                           "2007"
+  PlParam "pretty"                         "true"
+}
+EOF
+
+cat > /etc/olsrd/olsrd.6.conf << EOF
+#####################################################
+# OLSR.org routing daemon config file
+#####################################################
+
+DebugLevel                                 0
+IpVersion                                  6
+OlsrPort                                   699
+TosValue                                   224
+LinkQualityFishEye                         0
+MprCoverage                                1
+LockFile                                   "/var/run/olsrd.lock"
+MainIp                                     fc01::$HOSTNUMBER
+LinkQualityAlgorithm                       "etx_ffeth"
+
+InterfaceDefaults
+{
+  HelloInterval                            2.00
+  HelloValidityTime                        20.00
+  TcInterval                               5.00
+  TcValidityTime                           30.00
+  MidInterval                              5.00
+  MidValidityTime                          50.00
+  HnaInterval                              5.00
+  HnaValidityTime                          15.00
+}
+
+Interface "wlan1"
+{
+}
+
+Hna6
+{
+  fc00:$HOSTNUMBER::/64
+}
+
+IpcConnect
+{
+}
+
+#####################################################
+# Plugins
+#####################################################
+
+LoadPlugin "/usr/lib/olsrd_netjson.so.1.1"
+{
+  PlParam "Accept"                         "::"
+  PlParam "port"                           "3005"
+}
+
+LoadPlugin "/usr/lib/olsrd_txtinfo.so.1.1"
+{
+  PlParam "Accept"                         "::"
+  PlParam "port"                           "3006"
+  PlParam "httpheaders"                    "false"
+}
+
+LoadPlugin "/usr/lib/olsrd_jsoninfo.so.1.1"
+{
+  PlParam "Accept"                         "::"
+  PlParam "port"                           "3007"
+  PlParam "pretty"                         "true"
+}
+EOF
+
+olsrd -f /etc/olsrd/olsrd.conf
+olsrd -f /etc/olsrd/olsrd.6.conf
+
+killall -q iperf
+sleep 1
+
+iperf -s -V -D &

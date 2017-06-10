@@ -1,0 +1,37 @@
+#!/bin/ash
+
+echo 0 > /sys/kernel/debug/ieee80211/phy1/ath9k/airtime_flags
+sleep 2
+
+REGEX='^[[:space:]]*node([[:digit:]]+)[[:space:]]*$'
+HOSTNUMBER="$(hostname | \
+  grep -iE "$REGEX" | \
+  sed -r "s#$REGEX#\1#")"
+
+if [[ -z "$HOSTNUMBER" ]]; then
+  echo "ERROR: host number not found"
+  exit 1
+fi
+
+echo "Host : $HOSTNUMBER"
+
+#
+# bmx7
+#
+
+# safe mem+confusion:
+rmmod batman_adv
+
+killall -q bmx7
+sleep 1
+#ip link set wlan1 up
+
+bmx7 plugin=bmx7_tun.so plugin=bmx7_iwinfo.so dev=wlan1
+bmx7 -c tunDev=main /tun4Address 10.0.$HOSTNUMBER.1/24 /tun6Address fc00:$HOSTNUMBER::1/64
+bmx7 -c tunOut=v4out /network 10.0.0.0/8
+bmx7 -c tunOut=v6out /network fc00::/16
+
+killall -q iperf
+sleep 1
+
+iperf -s -V -D &
