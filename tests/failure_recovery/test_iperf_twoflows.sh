@@ -88,6 +88,6 @@ kill -9 $NOISEPID1 $NOISEPID2 $NOISEPID3 $NOISEPID4 $NOISEPID5
 echo "collcting datafiles from routers"
 for sip in $LEFT_NODES; 
 do
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/$OUTFOLDER
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* $OUTFOLDER
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip rm /tmp/failuretest*
 done
