@@ -1,0 +1,31 @@
+Reproducing battlemesh V10 like experiments
+===========================================
+
+== Define management and test network
+
+Spread routers to create an interesting network topology for your tests, make
+sure you can reach all of them through the management network.
+
+[NOTE]
+================================================================================
+ For easier debugging have two separate testbeds: a big one "production" and a
+ small one for debugging. Everytime one protocol finds a bug or some extra
+ configuration are required, the devs will use the small one, without locking
+ the production one.
+================================================================================
+
+[NOTE]
+================================================================================
+Use cables at least for management network so it just works, Power-line could be
+useful too.
+================================================================================
+
+
+== How to reproduce tests
+
+ - Connect one of your interfaces to the management network
+ - Verify you have proper connectivity to testbed nodes
+ - For each routing protocol run the test ex: +cd tests/failure_recovery/; ./test_iperf_fiveflows.sh OLSRv1+
+ - After the test fish parse the collected data ex: +cd tests/failure_recovery/parser_scripts; ./parse_all_iperf_fiveflows.sh+
+ - Generate the grafs ex: +cd tests/failure_recovery/gnuplot; gnuplot plot_iperf_fiveflows.gnuplot+
+ - Contemplate the beaty in +tests/failure_recovery/graphs/+
