@@ -7,7 +7,7 @@ set boxwidth 0.1
 
 set xlabel "Paths {NA} is with air fairness disabled"
 
-set xrange [-1:3]
+set xrange [-1:4]
 set xtics ("8-17" 0.25, "9-2" 2.25)
 set title "Transmitted Data, 10 iperf sessions (10s each) Airtime Fairness Disabled"
 set ylabel "Bytes (10percent-median-90percent)"
