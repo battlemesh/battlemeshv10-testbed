@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEADNODE=$2 # IP address of the node to kill
+OUTFOLDER=$1 # IP address of the node to kill
 DATAFILE="/tmp/failuretest.txt"
 
 rm -f /tmp/pids.txt
@@ -13,10 +13,14 @@ NODED1="fc00:17::1"
 NODED2="fc00:2::1"
 
 # Run the script in each node with a ssh session in bg 
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES1 'ash -s'< ./iperf.sh $NODED1 &
-echo $! >> /tmp/pids.txt
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES2 'ash -s'< ./iperf.sh $NODED2 &
-echo $! >> /tmp/pids.txt
+for st in 1 2 3 4 5 6 7 8 9 10
+do
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES1 'ash -s'< ./iperf.sh $NODED1 $st &
+	echo $! >> /tmp/pids.txt
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$NODES2 'ash -s'< ./iperf.sh $NODED2 $st &
+	echo $! >> /tmp/pids.txt
+	sleep 10
+done
 
 # kill one node
 #echo | ssh root@$DEADNODE reboot
@@ -42,5 +46,6 @@ echo "DONE!"
 echo "collcting datafiles from routers"
 for sip in $LEFT_NODES; 
 do
-    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/
+    scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip:/tmp/failuretest* data/$OUTFOLDER
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$sip rm /tmp/failuretest*
 done
