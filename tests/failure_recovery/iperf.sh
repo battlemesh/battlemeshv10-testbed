@@ -1,8 +1,8 @@
 DEST=$1
+IPERFOUT="/tmp/failuretest-iperf-"`hostname`"-$DEST.csv"
 
 if [ $2 == 1 ];
 	then
-	rm /tmp/failuretest-iperf-*;
+	rm $IPERFOUT;
 	fi
-IPERFOUT="/tmp/failuretest-iperf-"`hostname`"-$DEST.csv"
 iperf -f M -y C -t 20 -e -V -c $DEST | tail -n 2 >> $IPERFOUT
