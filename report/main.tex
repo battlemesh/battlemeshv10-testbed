@@ -17,7 +17,6 @@
 \usepackage{paralist}
 \usepackage{xspace}
 \usepackage{multirow}
-\usepackage[italian]{babel}
 \usepackage[procnames]{listings}
 \usepackage{rotating}
 \usepackage{wrapfig}
@@ -29,7 +28,10 @@
 \usepackage{verbatim}
 \usepackage{cleveref}
 \usepackage{todonotes}
+\usepackage{tcolorbox}
+\usepackage{placeins}
 
+\newtcolorbox{mybox}[1]{colback=red!5!white,colframe=red!75!black,fonttitle=\bfseries,title=#1}
 \input{defs}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -71,7 +73,7 @@ measures are extracted. While the initial spirit of the event was to set-up a
 competition between the protocols (as the name suggests), with time it changed
 into a moment of exchange of experience, collective development of
 innovations in the field of mesh networks and wireless open source
-networking software. This document reports on the results of the tenth edition
+networking software. This document reports on the experimental results of the tenth edition
 of the Battle of The Mesh event.}
 \end{flushleft}
 \vskip2cm
@@ -103,7 +105,7 @@ analyzers).
 
 WBM is now at its tenth edition, and is organized by a motivated and large group
 of people (approximately 80-100 participants in the whole week in the last
-editions). 
+editions from 2-3 continents). 
 
 \section{The Testbed}
 This year, the testbed was realized with 17 TP-Link WDR4300 routers, equipped
@@ -113,27 +115,29 @@ to the tests, but did not participate to the routing, since they are equipped
 with a different chipset. The nodes were configured to set-up two independent
 networks, a ``management'' network, running on the 2.4GHz, and a ``testing''
 network, running on the 5 GHz. The management network was configured with the
-IEEE 802.11s protocol, and was used only to access manage the nodes and perform
+IEEE 802.11s protocol, and was used only to access the nodes and perform
 tasks. The testing network was made with interfaces configured in ad-hoc mode
 and, for each test, was using a specific routing protocol. 
 
-\cref{fig:topo} reports the topology of the network as exported by one of the
+\Cref{fig:topo} reports the topology of the network as exported by one of the
 network node, when running the OLSRv1 protocol. This topology was used to
 understand and roughly guess the property of the network. The underlying image
 is the map of \textit{Volkskundemuseum Wien}\footnote{The Austrian Museum of
 Folk Life And Folk Art, Laudongasse 15-19, Vienna, Austria}
-that hosted the event.
+that hosted the event, roughly, the distance from node 9 to node 17 is about
+75m, and the width of the main room is about 8m (the main room is the room where
+nodes 1,4,7,6,31 are placed and where the conference took place).
 
 
 Routers numbered from 1 to 17 are the TP-Link, while router 31 is an Ubiquiti
 router that is used in this case to extract the network topology. In the real
 tests this router does not participate to the network functioning. The
 transparency of the links represents the badness of the link quality as reported
-by the OLSRv1 protocol, using the ETX metric\cite{ETX}. A solid link means ETX =
-1 (good link), while a transparent link means ETX > 1 (the highest, the worse).
+by the OLSRv1 protocol, using the ETX metric. A solid link means ETX =
+1 (good link), while a transparent link means ETX $>$ 1 (the highest, the worse).
 
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=\linewidth]{images/map.png}
   \caption{Network topology, as exported from the OLSRv1 protocol} 
@@ -151,15 +155,15 @@ level for the testing network. With the transmission power set to 17dBm the
 network was considered too dense, and thus of little interest for the routing
 function. Therefore the power was lowered to 10dBm, and produced the
 distribution of path costs reported in \cref{fig:ETXrank}. Each entry is computed
-as follows, given the network graph and a couple of nodes A, B, the shortest
+as follows, given the network graph and a couple of nodes (A, B), the shortest
 path between A and B is computed via networkX and then the sum of the ETX values
 for the path is done\footnote{For the code used for this task, see
-\url{http://github.com/}}\todo{put link to the code here}. We selected four nodes
+\url{https://github.com/battlemesh/battlemeshv10-testbed/blob/master/tests/failure_recovery/parser_scripts/parse_json.py}}. We selected four nodes
 to perform the tests, node 8, 9, 17, and 2, that are at the extreme ends of the
 topology. \cref{fig:ETXrank} reports the corresponding shortest path costs in
 the ranking.
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=\linewidth]{images/route_lenght_distribution.png}
   \caption{The ranked list of the ETX weight of all the shortest paths in the
@@ -170,29 +174,31 @@ the ranking.
 \subsection{The Protocols and the Experiments}
 
 Several protocols were tested during the WBM, not all the protocols (or their
-variants) have been tested on all the configuration. \cref{tab:protocols}
+variants) have been tested on all the configuration. \Cref{tab:protocols}
 reports the list of the protocols, a brief description, and the link to the
 source code. 
 
 \begin{table}
     \centering
-    \begin{tabular}{lll}
-        \emph{Name} & \emph{Desciption} & \emph{Link} \\
+    \begin{tabular}{ll}
+        \emph{Name} & \emph{Desciption} \\
         \midrule
-        BABEL & & \\
-        BATMAN Advanced v4 & & \\
-        BATMAN Advanced v5 & & \\
-        BMX7  & & \\
-        BMX7TUN  & & \\
-        OLSRv1 & & \\
-        OLSRv2 & & \\
-        OLSRv2\_MPR & & \\
+        BABEL & Distance-vector LIII routing protocol \\
+        BATMAN Advanced v4 & Source Routed LII routing protocol \\
+        BATMAN Advanced v5 & Source Routed LII routing protocol (experimental)\\
+        BMX7  & Source Routed LIII routing protocol \\
+        BMX7TUN   & BMX7 with IP tunnel support\\
+        OLSRv1 &  Link state LIII routing protocol\\
+        OLSRv2 &  Link state LIII routing protocol\\
+        OLSRv2\_MPR  & OLSRv2 with MPR enabled\\
         \bottomrule
     \end{tabular}
+    \caption{The list of tested protocols}
+    \label{tab:protocols}
 \end{table}
 
 Four out of six days that make the WBM were devoted to set-up the testbed, and
-only the last two were dedicate to the testing itself. The procedure of set-up
+only the last two were dedicated to the testing itself. The procedure of set-up
 and testing is error prone due to a vast set of reasons that range from the need
 to use a recent OpenWRT/LEDE version, the potential incompatibility with the
 last version of the protocols, their configuration, and last, but not least, the
@@ -205,17 +211,19 @@ unknown bugs in their protocols. This process is vital for them to improve their
 software and stabilize their code, and is arguably even more important than the
 results of the tests themselves. 
 
-Three set of experiments were planned, and two were fully performed:
+Four set of experiments were planned, and three were fully performed:
 \bi
 \ii Ping test: a session of 100 pings from node 8 to 17, 8 to 2, 9 to 17, and 9
 to 2 were performed to measure the loss and the delay distribution. This test
 was repeated only once.
-\ii iperf test: a batch of 10 iperf sessions were run (10s each) between node 8
+\ii iperf test: a batch of 10 TCP iperf sessions were run (10s each) between node 8
 and 17 and from node 9 to node 2. This experiment was repeated with two more
 variants, one in which node 14 and 10 were running another iperf with a 5Mbps
-limit, and a second one in which another 5Mbps session was running from node 4
-to node 15. These added sessions were not recorded but where used to increase
+limit, and a second one in which 4 5Mbps session was running between other
+nodes. These added sessions were not recorded but where used to increase
 the level of congestion in the central part of the network.
+\ii Airtime Fairness tests: in this case we repeated the iperf tests with and
+without the Airtime Fairness enabled.
 \ii pingall test: in this experiment, a random subset of all the possible
 couples was taken and an iperf session was performed. This test should have been
 repeated for all the protocols, with and without Airtime fairness enabled, but
@@ -239,7 +247,7 @@ visible only when tested on networks larger than a certain size.
 It was not possible to patch BATMAN5 before the end of the WBM and thus, from
 now on the results of BATMAN5 are omitted. 
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_loss-IPv6.png}
   \caption{The percentage of lost packets per protocol}
@@ -255,7 +263,7 @@ in this comparison, since they have non-zero loss. It is reasonable to assume
 that the packets that could not be delivered, if they could reach the
 destination would probably have a large RTT.
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_delay-IPv6.png}
   \caption{The values of the 10th percentile, 90th percentile, and median value
@@ -273,81 +281,161 @@ phenomenons, one is the difference from one protocol to another that impacts the
 median value, the other is the presence of many outliers that influence the
 whiskers of \cref{fig:delaydist}.
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_delay_distribution-IPv6-1-timesequence.png}
     \caption{The values of the RTT per each ping, 9 to 17}
   \label{fig:delaysequence1}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_delay_distribution-IPv6-2-timesequence.png}
     \caption{The values of the RTT per each ping, 9 to 2}
   \label{fig:delaysequence2}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_delay_distribution-IPv6-3-timesequence.png}
     \caption{The values of the RTT per each ping, 8 to 17}
   \label{fig:delaysequence3}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
   \includegraphics[width=.9\linewidth]{images/failure_test_delay_distribution-IPv6-4-timesequence.png}
     \caption{The values of the RTT per each ping, 8 to 2}
   \label{fig:delaysequence4}
 \end{figure}
 
+\FloatBarrier
 \subsection{iperf Test}
+\Cref{fig:iperfnoflows,fig:iperfoneflow,fig:iperffourflows} report the performance
+of all the protocols when two parallel iperf sessions are run to measure the
+performance and zero, one or 4 sessions are added to increase background noise.
+The background sessions are fixed at 5Mbps and take place between couples
+(14,10), (4,15), (1,16), (12,11). Some observations that can be done are:
+\bi
+\ii There is a net performance degradation from one figure to the next one. 
+\ii With zero and one flow, in the path 8-17 (that according to \cref{fig:ETXrank}
+is the shortest of the two) the protocol behave similarly, while in the path 9-2
+there is a higher performance variation. In particular, BMX7 consistently
+performs better than the others (as the median value) but also shows the largest
+deviation. This may be the consequence of the combination of the zero loss and
+the stable delay that BMX7 is able to obtain (see \cref{fig:pingloss,fig:delaydist}).
+\ii with 5 flows, the relative difference increases and OLSRv2 seems to perform
+better than the other protocols averaging the results of both paths.
+\ei
 
-BMX7 without traffic, enjoys better TCP performance due to the zero loss and
-and more stable delay (see image of delay). when load increases we don't know.
-\begin{figure}
+
+\begin{figure}[!htb]
   \centering
     \includegraphics[width=.9\linewidth]{images/failure_test_iperf_10runs-IPv6.png}
-    \caption{}
-  \label{fig:iperfnoflow}
+    \caption{iperf tests without background traffic.}
+  \label{fig:iperfnoflows}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
     \includegraphics[width=.9\linewidth]{images/failure_test_iperf_10runs-IPv6-oneflow.png}
-    \caption{}
+    \caption{iperf tests with one background traffic flow.}
   \label{fig:iperfoneflow}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
     \includegraphics[width=.9\linewidth]{images/failure_test_iperf_10runs-IPv6-twoflow.png}
-    \caption{}
-  \label{fig:iperftwoflows}
+    \caption{iperf tests with four background traffic flows.}
+  \label{fig:iperffourflows}
 \end{figure}
 
+\Cref{fig:iperfnofair} reports the comparison of the performance of the iperf
+sessions, without background traffic with and without the Airtime fairness
+enabled. Each color in the figure corresponds to a protocol, the left value
+(with a dot at the median value) is the performance without the Airtime fairness
+enabled, the right value (with a dash at the median value) is the performance
+with the Airtime fairness enabled. It is hard to draw any conclusion on the
+importance of Airtime fairness, BMX7 still remains the protocol that guarantees
+the highest throughput, even if it is affected by the Airtime fairness in the
+opposite way in the two paths. Also the other protocols are affected both positively
+and negatively by Fairness, so it is unclear if the results are the effect of
+fairness, or of the changed conditions in the testbed from one run to the other.
+The only conclusion is that Airtime fairness does not influence the performance
+of mesh protocols in an critical way. 
 
 
+\begin{figure}[!htb]
+  \centering
+    \includegraphics[width=.9\linewidth]{images/failure_test_iperf_10runs-IPv6_noairfair.png}
+    \caption{iperf tests without background traffic and with/without airtime fairness.}
+  \label{fig:iperfnofair}
+\end{figure}
+
+\FloatBarrier
 \section{Suggestion for the Future Battlemeshers}
 
-\bi
-\ii Assign microtasks to people in the room. Shout out loud, document them on
-the web (like an etherpad) and use something to catch attention (a trumpet!)
-when necessary. This way some tasks can be delegated to random people,
-especially the creation of commands to parse results, or to create graphs.
-\ii Use cable to reach the nodes (or powerline).
-\ii dD small tests, so you understand what happens.
-\ii Fork the testbed. Use a small testbed for the devs to make their patches,
-otherwise when something does not work they will lock the testbed for too long.
-\ii Bring some hardware to perform night-time batched long tests, like a
-Raspberry
-\ei 
+What follows is a set of recommendations we, as the people that spent most time
+on the testbed, want to give to the ones that in the next editions of the
+battlemesh will set-up the testbed. 
 
 
-\section{Thanks}
-thank the organizers here
-\bibliographystyle{IEEEtran}
-\bibliography{bibliography}
+\begin{mybox}{Assign micro-tasks to other people}
+    Setting up the testbed is full-time activity, so it is demanding on those
+    that do it. Still, some tasks can be ``outsourced'' to others, tasks that
+    are small, atomic and tedious, such as writing scripts to parse the output
+    of commands  used for testing (ping, iperf, traceroute\ldots). When needed,
+    instead of spending tens of minutes to write the script, it is useful to ask
+    for help to others, this was done a couple of times and worked good.
+    Ideally: write the task to an etherpad, ring a bell, and wait for someone to
+    provide a script that does the job.
+\end{mybox}
+
+\begin{mybox}{Use cables!}
+    We choose 802.11s for the management network because, if it does not work,
+    we can't blame any of the protocols under test. 802.11s works decently but,
+    as any other solution is influenced by the state of the network. We believe
+    that the best thing would be to buy a 300M reel of ethernet cable, and use
+    that to manage the nodes. This would spare us of many failures in
+    connecting, launching scripts, failing, restarting etc\ldots. Powerline
+    could be an alternative.
+\end{mybox}
+\begin{mybox}{Do small tests}
+    Large scale tests (all nodes against all nodes) are tempting, but since the
+    network becomes complex it is hard to understand what is happening. We
+    decided to start with small tests, where it is easier to understand what
+    happens, while it happens. 
+\end{mybox}
+\begin{mybox}{Bring hardware for night-time tests}
+    Probably the best moment to perform large-scale tests is during the night.
+    But no one wants to leave his/her laptop at the BM nighttime. So it is
+    important to remember to bring some other hardware (like a few raspberries)
+    that can be used to perform automated tests during the night. 
+\end{mybox}
+
+\begin{mybox}{Fork the testbed}
+    It happens that some of the devels need to use the testbed to fix bugs that
+    happen during the experiments, and it is the added value of BM for them. On
+    the other side, we can not freeze testing for long while they debug/improve
+    their code. So a wise idea is to realize a small tbed (4-5 nodes) detached
+    from the large one that devels can use to fix their bugs. 
+\end{mybox}
+
+
+\section{Conclusions}
+While there is a discussion in the BM community about changing the format of the event
+to something that is more conference-wise and less testbed-wise, our
+impression is that the testbed is important. Even if the results are
+incomplete, and scientifically not always sound, the whole process of
+setting up the testbed, running the protocols, debugging with the developers
+is an integral part of the conference and guarantees that the experts will
+participate to the conference, which makes it different from any other
+conference. 
+
+
+
+%\bibliographystyle{IEEEtran}
+%\bibliography{bibliography}
 
 
 \end{document}
